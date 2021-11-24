@@ -6,6 +6,9 @@ let currentWind = document.getElementById("current-wind");
 let currentHumid = document.getElementById("current-humidity");
 let currentUv = document.getElementById("current-uv");
 
+let iconUrl = " http://openweathermap.org/img/wn/"
+let dayOneIcon = document.getElementById("day-one-icon");
+
 function searchFormSubmit (event) {
   event.preventDefault();
   
@@ -33,7 +36,8 @@ function dispResult(oneCallData) {
 
 function dispResults(fiveResults) {
   console.log(fiveResults);
-
+  let fiveResults.list[].weather[].icon
+  dayOneIcon.iconUrl = fiveResults.list[0].weather[0].icon;
   
   
 }
