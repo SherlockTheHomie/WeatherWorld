@@ -1,7 +1,10 @@
 
 let searchLocation = document.getElementById("search-form");
 let currentCity = document.getElementById("current-city");
-let currentWeather = document.getElementById("current-weather");
+let currentTemp = document.getElementById("current-temp");
+let currentWind = document.getElementById("current-wind");
+let currentHumid = document.getElementById("current-humidity");
+let currentUv = document.getElementById("current-uv");
 
 function searchFormSubmit (event) {
   event.preventDefault();
@@ -13,75 +16,29 @@ function searchFormSubmit (event) {
     return;
   }
 
-
  currentApi(userSearch);
  fiveDay(userSearch);
 }
 
 searchLocation.addEventListener("submit", searchFormSubmit);
 
-function dispResult(curResults) {
-  console.log(curResults);
-  currentWeather.textContent = curResults.main;
-
-
+function dispResult(oneCallData) {
+  console.log(oneCallData);
+  currentTemp.textContent = "Temperature: " + oneCallData.current.temp + "˚F";
+  currentWind.textContent = "Wind: " + oneCallData.current.wind_speed + "MPH";
+  currentHumid.textContent = "Humidity: " + oneCallData.current.humidity + "%";
+  currentUv.textContent = "UV Index: " + oneCallData.current.uvi;
 }
 
 
 function dispResults(fiveResults) {
   console.log(fiveResults);
-  let dayCard = document.createElement('div');
-  dayCard.classList.add('card');
-
-  let dayBody = document.createElement('div');
-  dayBody.classList.add('card-body');
-  dayCard.append(dayBody);
-
-  let dayWeather = document.createElement('h5');
-  dayWeather.classList.add('card-title');
 
   
-
+  
 }
 
 
-{/* <div class="card" style="width: 18rem;">
-        <img src="..." class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> 
-        </div>
-      </div> */}
-
-
-
-function currentApi (locSearch) {
-
-  let currentUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + locSearch + '&units=imperial&appid=669d0117a66bacb5a8ed03c57960fe8c';
-
-  fetch(currentUrl)
-  .then(function (response) {
-    if (!response.ok) {
-      throw response.json();
-    }
-    
-    return response.json();
-  })
-  .then(function (srchResult) {
-
-    console.log(srchResult);
-
-    if (!srchResult.results.length) {
-      console.log("that city no longer exists!");
-      
-    } else {
-      
-      for (var i = 0; i < srchResult.results.length; i++) {
-      dispResult(srchResult.results[i]);
-    }
-    }
-});
-}
 
 
 function fiveDay (locSearch) {
@@ -96,21 +53,82 @@ function fiveDay (locSearch) {
     
     return response.json();
   })
-  .then(function (srchResult) {
+  .then(function (fiveResults) {
 
-    console.log(srchResult);
-
-    if (!srchResult.results.length) {
-      console.log("that city no longer exists!");
-      
-    } else {
-      currentCity.textContent = srchResult.city.name;
-      for (var i = 0; i < srchResult.results.length; i++) {
-      dispResults(srchResult.results[i]);
-    }
-    }
-});
+    dispResults(fiveResults);
+    
+  });
 }
+
+// Current Weather API Fetch
+function currentApi (locSearch) {
+
+  let currentUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + locSearch + '&units=imperial&appid=669d0117a66bacb5a8ed03c57960fe8c';
+
+  fetch(currentUrl)
+  .then(function (response) {
+    if (!response.ok) {
+      throw response.json();
+    }
+    return response.json();
+  })
+  .then(function (curResult) {
+    currentCity.textContent = curResult.name;
+    console.log(curResult);
+  oneCall(curResult);
+    });
+};
+
+function oneCall(curResult) {
+  let locLat = curResult.coord.lat;
+  let locLon = curResult.coord.lon;
+  let currentUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + locLat + '&lon=' + locLon + '&units=imperial&appid=669d0117a66bacb5a8ed03c57960fe8c';
+
+  fetch(currentUrl)
+    .then(function (response) {
+      if (!response.ok) {
+        throw response.json();
+      }
+      return response.json();
+    })
+    .then(function (oneCallData) {
+      dispResult(oneCallData);
+  });
+};
+
+// Five Day API Fetch
+
+
+// function citySearch () {
+//   let cityCoords = `https://api.openweathermap.org/data/2.5/weather?q=Austin&appid=f85be298446b14abaf2660208bb00bf7`;
+//   fetch(cityCoords)
+//     .then(function (response) {
+//       return response.json();
+//     })
+//     .then(function (fiveDayData) {
+//         console.log("This is the openWeather fetch for lat and lon")
+//         console.log(fiveDayData.coord);
+//         console.log(fiveDayData.coord.lon);
+//         console.log(fiveDayData.coord.lat);
+//         newFunc(fiveDayData);
+//     });
+//   };
+  
+
+//   function newFunc(fiveDayData) {
+//       let cityLon = fiveDayData.coord.lon;
+//       let cityLat = fiveDayData.coord.lat;
+//       let oneCall = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cityLat + '&lon=' + cityLon + '&exclude=current&appid=f85be298446b14abaf2660208bb00bf7';
+//       fetch(oneCall)
+//         .then(function (response) {
+//           return response.json();
+//         })
+//         .then(function (oneCallData) {
+//           console.log("This is the oneCall data");
+//           console.log(oneCallData);
+//         });
+//   }
+
 
 
 

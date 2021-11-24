@@ -41,16 +41,29 @@
     <!-- Current Weather -->
     <div class="jumbotron">
         <h1 class="display-4" id="current-city"></h1>
-        <p class="lead" id="current-weather"></p>
+        <h2 class="lead" id="current-temp"></h2>
+        <h2 class="lead" id="current-wind"></h2>
+        <h2 class="lead" id="current-humidity"></h2>
+        <h2 class="lead" id="current-uv"></h2>
         <hr class="my-4">
-        <p></p>
         <a class="btn btn-primary btn-lg" role="button">Add to your weather</a>
       </div>
     
       <!-- 5 day forecast -->
     <div class="d-flex">
     
+      <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title" id="day-one-card"></h5>
+            
+            <p class="card-text" id="day-one-temp"></p>
+            <p class="card-text" id="day-one-wind"></p> 
+            <p class="card-text" id="day-one-humidity"></p>  
+        </div>
+      </div>
       
+
+
     </div>
 
     
