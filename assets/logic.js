@@ -6,8 +6,10 @@ let currentWind = document.getElementById("current-wind");
 let currentHumid = document.getElementById("current-humidity");
 let currentUv = document.getElementById("current-uv");
 
-let iconUrl = " http://openweathermap.org/img/wn/"
+let iconUrl = "http://openweathermap.org/img/wn/"
 let dayOneIcon = document.getElementById("day-one-icon");
+
+let cardHolder = document.getElementById("five-day");
 
 function searchFormSubmit (event) {
   event.preventDefault();
@@ -33,16 +35,81 @@ function dispResult(oneCallData) {
   currentUv.textContent = "UV Index: " + oneCallData.current.uvi;
 }
 
+let date = moment.utc().format();
+let local = moment.utc(date).local().format();
 
-function dispResults(fiveResults) {
-  console.log(fiveResults);
-  let fiveResults.list[].weather[].icon
-  dayOneIcon.iconUrl = fiveResults.list[0].weather[0].icon;
+
+
+function dispResults(oneCallData) {
+  for (let weatherIndex = 0; weatherIndex < 5; weatherIndex++) {
+
+function dateConversion() {
+  let unixTimestap = oneCallData.daily[weatherIndex].dt;
+  let milliseconds = unixTimestap * 1000;
+  let dateObject = new Date(milliseconds);
+
+  humanDateFormat = dateObject.toLocaleString("en-US", {weekday: "long"});
   
-  
+};
+
+    dateConversion();
+    
+let weatherCard = document.createElement('div');
+weatherCard.classList.add('card');
+weatherCard.setAttribute("style", "width: 18rem");
+cardHolder.append(weatherCard);
+
+let weatherBody = document.createElement('div');
+weatherBody.classList.add('card-body');
+weatherCard.append(weatherBody);
+
+let weatherTitle = document.createElement('h5');
+weatherTitle.classList.add('card-title');
+weatherBody.append(weatherTitle);
+
+let weatherIcon = document.createElement('a-href');
+weatherIcon.setAttribute("id", "weather-icon");
+weatherBody.append(weatherIcon);
+
+let weatherTemp = document.createElement('p');
+weatherTemp.classList.add('card-text');
+weatherTemp.setAttribute("id", "temp");
+weatherBody.append(weatherTemp);
+
+let weatherWind = document.createElement('p');
+weatherWind.classList.add('card-text');
+weatherWind.setAttribute("id", "wind");
+weatherBody.append(weatherWind);
+
+let weatherHmd = document.createElement('p');
+weatherHmd.classList.add('card-text');
+weatherHmd.setAttribute("id", "humidity");
+weatherBody.append(weatherHmd);
+
+let weatherDesc = document.createElement('p');
+weatherDesc.classList.add('card-text');
+weatherDesc.setAttribute("id", "description");
+weatherBody.append(weatherDesc);
+
+weatherTitle.textContent = humanDateFormat;
+weatherTemp.textContent = "Temperature: " + oneCallData.daily[weatherIndex].temp.day + "˚F";
+weatherWind.textContent = "Wind Speed :" + oneCallData.daily[weatherIndex].wind_speed + "mph";
+weatherHmd.textContent = "Humidity: " + oneCallData.daily[weatherIndex].humidity + "%";
+weatherDesc.textContent = oneCallData.daily[weatherIndex].weather[0].description;  
 }
 
 
+}
+
+{/* <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title" id="day-one-card"></h5>
+          <a href="" id="day-one-icon"></a>
+          <p class="card-text" id="day-one-temp"></p>
+          <p class="card-text" id="day-one-wind"></p> 
+          <p class="card-text" id="day-one-humidity"></p>  
+        </div>
+      </div> */}
 
 
 function fiveDay (locSearch) {
@@ -58,8 +125,7 @@ function fiveDay (locSearch) {
     return response.json();
   })
   .then(function (fiveResults) {
-
-    dispResults(fiveResults);
+    console.log("This is Five Day Weather Api");
     
   });
 }
@@ -78,7 +144,7 @@ function currentApi (locSearch) {
   })
   .then(function (curResult) {
     currentCity.textContent = curResult.name;
-    console.log(curResult);
+    console.log("This is the Current Weather API");
   oneCall(curResult);
     });
 };
@@ -96,9 +162,12 @@ function oneCall(curResult) {
       return response.json();
     })
     .then(function (oneCallData) {
+      console.log("This is One Call Weather API");
       dispResult(oneCallData);
+      dispResults(oneCallData);
   });
 };
+
 
 // Five Day API Fetch
 
