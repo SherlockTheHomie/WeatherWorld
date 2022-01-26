@@ -5,6 +5,7 @@ let currentTemp = document.getElementById("current-temp");
 let currentWind = document.getElementById("current-wind");
 let currentHumid = document.getElementById("current-humidity");
 let currentUv = document.getElementById("current-uv");
+let userSearch = document.getElementById("search-input");
 
 let iconUrl = "http://openweathermap.org/img/wn/"
 let dayOneIcon = document.getElementById("day-one-icon");
@@ -14,7 +15,7 @@ let cardHolder = document.getElementById("five-day");
 function searchFormSubmit (event) {
   event.preventDefault();
   
-  let userSearch = document.getElementById("search-input").value;
+  userSearch = document.getElementById("search-input").value;
 
   if (!userSearch) {
     console.error('Please enter a location to search');
@@ -97,19 +98,7 @@ weatherWind.textContent = "Wind Speed :" + oneCallData.daily[weatherIndex].wind_
 weatherHmd.textContent = "Humidity: " + oneCallData.daily[weatherIndex].humidity + "%";
 weatherDesc.textContent = oneCallData.daily[weatherIndex].weather[0].description;  
 }
-
-
 }
-
-{/* <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h5 class="card-title" id="day-one-card"></h5>
-          <a href="" id="day-one-icon"></a>
-          <p class="card-text" id="day-one-temp"></p>
-          <p class="card-text" id="day-one-wind"></p> 
-          <p class="card-text" id="day-one-humidity"></p>  
-        </div>
-      </div> */}
 
 
 function fiveDay (locSearch) {
@@ -169,57 +158,67 @@ function oneCall(curResult) {
 };
 
 
-// Five Day API Fetch
 
 
-// function citySearch () {
-//   let cityCoords = `https://api.openweathermap.org/data/2.5/weather?q=Austin&appid=f85be298446b14abaf2660208bb00bf7`;
-//   fetch(cityCoords)
-//     .then(function (response) {
-//       return response.json();
-//     })
-//     .then(function (fiveDayData) {
-//         console.log("This is the openWeather fetch for lat and lon")
-//         console.log(fiveDayData.coord);
-//         console.log(fiveDayData.coord.lon);
-//         console.log(fiveDayData.coord.lat);
-//         newFunc(fiveDayData);
-//     });
-//   };
-  
-
-//   function newFunc(fiveDayData) {
-//       let cityLon = fiveDayData.coord.lon;
-//       let cityLat = fiveDayData.coord.lat;
-//       let oneCall = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + cityLat + '&lon=' + cityLon + '&exclude=current&appid=f85be298446b14abaf2660208bb00bf7';
-//       fetch(oneCall)
-//         .then(function (response) {
-//           return response.json();
-//         })
-//         .then(function (oneCallData) {
-//           console.log("This is the oneCall data");
-//           console.log(oneCallData);
-//         });
-//   }
+let myWeatherStorage = JSON.parse(localStorage.getItem("saved"))? JSON.parse(localStorage.getItem("saved")): [];
+let myLocations = document.getElementById("dropdownMenu");
+let pastList = document.getElementById("comboList");
+let saveBtn = document.getElementById("saveButton");
+let pairingName = document.getElementById("pairingSave");
 
 
 
+saveBtn.addEventListener("click", function(e) {
+	e.preventDefault();
+	let savedLocation = {
+		location: currentCity.innerText,
+	}
+	myWeatherStorage.push(savedLocation);
+	console.log(myWeatherStorage);
+	localStorage.setItem("saved", JSON.stringify(myWeatherStorage));
+	listBuilder();
+});
 
-// weather[0].
+  const listBuilder = () => {
+	myLocations.innerHTML = "";
+	myWeatherStorage.forEach(savedLocation => {
+	console.log(savedLocation.location);
+	const userLocation = document.createElement("a");
+	userLocation.innerHTML = savedLocation.location;
+	userLocation.setAttribute("class", "dropdown-item");
+  userLocation.setAttribute("href", "#");
+	userLocation.setAttribute("id", savedLocation.location);
+	console.log(userLocation);
+	myLocations.appendChild(userLocation);
+	userLocation.addEventListener("click", loadDate);
+	textClear();
+	});
+  };
 
+  function textClear() {
+	userSearch.value = "";
+  }
 
+let locData;
 
-// function gatherLocation () {
+function loadDate(event) {
+	console.log("option clicked");
+	console.log(event);
+	let savedLocation = localStorage.getItem("saved");
+	savedLocation = JSON.parse(savedLocation);
+	for (let i = 0; i < savedLocation.length; i++) {
+		if (event.target.getAttribute("id") === savedLocation[i].location) {
+		console.log(savedLocation[i]);
+		let locData = savedLocation[i]; 
+		console.log(locData);
+		popDate(locData); 
+		} 		
+	}	
+}
 
-//   let query = searchPamp[0].split('=').pop
+function popDate(locData) {
+	userSearch = locData.location;
 
-// }
-
-
-// fetch('https://api.openweathermap.org/data/2.5/forecast?q={dallas}&appid=669d0117a66bacb5a8ed03c57960fe8c')
-//   .then(function (response) {
-//     return response.json();
-//   })
-//   .then(function (data) {
-//     console.log(data);
-//   });
+currentApi(userSearch);
+fiveDay(userSearch);
+}
